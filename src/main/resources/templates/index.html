@@ -23,12 +23,12 @@
             </thead>
             <tbody>
             <!-- 루프 -->
-                <tr th:each = "bbs: ${bbsList}">
+                <tr th:each="bbs: ${bbsPage.content}">
                     <td class="text-center">1</td>
-                    <td class="ellipsis"><a href="" th:text="${bbs.title}">제목</a> </td>
+                    <td class="ellipsis"><a th:href="@{|view/${bbs.num}|}" th:text="${bbs.title}"></a> </td>
                     <td class="ellipsis text-center" th:text="${bbs.writer}"></td>
-                    <td class="text-center" th:text="${bbs.title}"></td>
-                    <td class="text-center" th:text="${bbs.title}"></td>
+                    <td class="text-center" th:text="${#temporals.format(bbs.wdate, 'yyyy/MM/dd')}"></td>
+                    <td class="text-center" th:text="${bbs.count}"></td>
                 </tr>
             <!-- /루프 -->
             </tbody>
@@ -64,25 +64,80 @@
         </div>
             <ul class="pagination justify-content-center">
               <li class="page-item"><a class="page-link bg-light" href="?pg=1&searchKey=${encodeSearchKey}&searchVal=${encodeSearchVal}"><i class="ri-arrow-left-double-line"></i></a></li>
-         <!-- 이전그룹 -->
-         <c:if test="${paging.startPageOfGroup > 1 }">
-           <li class="page-item"><a class="page-link" href="?pg=${paging.startPageOfGroup - 1 }&searchKey=${encodeSearchKey}&searchVal=${encodeSearchVal}"><i class="ri-arrow-left-s-line"></i></a></li>
-         </c:if>  
+
          
-         <c:forEach var="i" begin="${paging.startPageOfGroup }" end="${paging.endPageOfGroup}">
-            <li class='page-item <c:if test="${ i == paging.currentPage}">active</c:if>'><a class="page-link" href="?pg=${i}&searchKey=${encodeSearchKey}&searchVal=${encodeSearchVal}">${i }</a></li>
-         </c:forEach>  
+         <li class="page-item" th:each="i : ${#numbers.sequence(1, bbsPage.totalPages)}"
+             th:classappend="${i == bbsPage.number + 1} ? 'active'"
+         >
+            <a class="page-link"
+               th:href="@{/(page=${i}, searchKey=${searchKey}, searchVal=${searchVal})}"
+               th:text="${i}"></a>
+         </li>
+        
            
            
-          <!-- 다음그룹 -->
-         <c:if test="${paging.endPageOfGroup < paging.totalPages }">  
-           <li class="page-item"><a class="page-link" href="?pg=${paging.endPageOfGroup + 1}&searchKey=${encodeSearchKey}&searchVal=${encodeSearchVal}"><i class="ri-arrow-right-s-line"></i></a></li>
-         </c:if>  
          <li class="page-item"><a class="page-link bg-light" href="?pg=${paging.totalPages }&searchKey=${encodeSearchKey}&searchVal=${encodeSearchVal}"><i class="ri-arrow-right-double-line"></i></a></li>
          </ul>
       </div>   
  
 
+
+
+<!------------------------------------------------------------------------------------>
+
+
+
+      <ul class="pagination justify-content-center">
+        <!-- 처음 페이지 -->
+        <li class="page-item">
+           <a class="page-link bg-light"
+              th:href="@{/(page=1, searchKey=${searchKey}, searchVal=${searchVal})}">
+                <i class="ri-arrow-left-double-line"></i>
+           </a>
+        </li>
+       
+        <!-- 이전 페이지 -->
+        <li th:if="${startPageOfGroup > 1}" class="page-item">
+           <a class="page-link" 
+              th:href="@{/(page=${startPageOfGroup-1, searchKey=${searchKey}, searchVal=${searchVal}})}">
+               <i class="ri-arrow-left-s-line"></i>
+           </a>
+        </li> 
+
+        <!-- 페이지 번호 15개 단위로 --> 
+        <li class="page-item" th:each="i : ${#numbers.sequence(startPageOfGroup, endPageOfGroup)}"
+            th:classappend="${i == currentPage} ? 'active':''"
+        >
+           <a class="page-link"
+              th:href="@{/(page=${i}, searchKey=${searchKey}, searchVal=${searchVal})}"
+              th:text="${i}"></a>
+        </li>
+       
+ 
+        <!-- 다음페이지-->
+        <li class="page-item"
+            th:if="${endPageOfGroup < bbsPage.totalPages}">
+            <a class="page-link"
+               th:href="@{/(page=${endPageGroup+1}, searchKey=${searchKey}, searchVal=${searchVal})}">
+               <i class="ri-arrow-right-s-line"></i>
+            </a>   
+        </li>
+
+        <!--마지막 페이지-->
+        <li class="page-item">
+           <a class="page-link bg-light" 
+              th:href="@{/(page=${bbsPage.totalPages -1}, searchKey=${searchKey}, searchVal=${searchVal})}">
+              <i class="ri-arrow-right-double-line"></i>
+           </a>
+        </li>
+        </ul>
+
+
+
+
+
+
+        
     <script>
         $(function(){
             $(".dropdown-item").click(function(e){
@@ -93,13 +148,14 @@
                 $("#searchtext").text(selectedText);
             });
             
-            $("#searchForm").button(function(){
+            $("#searchbutton").click(function(){
                 const keyword = $("#searchInput").val().trim();
                 if(keyword === ""){
                     alert("검색어를 입력하세요.");
                     $("#searchInput").focus();
                     return false;
                 }
+                $("#searchForm").submit();
             });
         });
         </script>

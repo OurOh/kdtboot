@@ -4,12 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class kdtbootApplication {
+public class KdtbootApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(kdtbootApplication.class, args);
-
-		
+		SpringApplication.run(KdtbootApplication.class, args);
 	}
-
 }

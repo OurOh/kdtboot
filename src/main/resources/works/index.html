@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+       *{
+          box-sizing: border-box;
+       }
+       .container{
+        width:1000px;
+        margin:auto;
+       }
+       .row{
+        display:flex;
+        flex-wrap: wrap;
+       }
+       .col{
+        width:33.3333333%;
+        padding:20px;
+       }
+       ul {
+          list-style-type:none;
+          margin:0;
+          padding:0;
+       }
+       li{
+          border-bottom:1px dashed #ddd;
+          padding:5px;
+       }
+    </style>
+    <script src="https://code.jquery.com/jquery.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+       $(function(){
+          let div = "<div class='row'>";
+          let ct = 0;  
+          obj.forEach(function(o, index){
+                if(o.bbsid != ct){
+                    if(ct != 0){
+                        div += "</ul></div>";
+                    } 
+                    div += "<div class='col'><ul>";
+                }
+                div +="<li>" + o.title + "</li>";     
+                ct = o.bbsid;     
+          }); 
+
+          div += "</div>";
+          $(".container").html(div);  
+       })
+    </script>
+</head>
+<body>
+   <div class="container">
+ 
+   </div>
+</body>
+</html>
